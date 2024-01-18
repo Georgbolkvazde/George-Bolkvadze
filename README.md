@@ -1,4 +1,4 @@
-
+REDME Projekts nosaukums:Paroles Menegers
 #Projekta uzdevums ir izveidot vienkāršu paroles pārvaldīšanas programmu, izmantojot Python. Programma piedāvā funkcionalitāti, kas ļauj lietotājam ērti pārvaldīt un generēt paroles dažādām tīmekļa vietnēm un lietotājiem.
 
 Funkcionalitātes un apraksts:
