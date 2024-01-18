@@ -1,0 +1,104 @@
+from prettytable import PrettyTable
+import string
+import random
+from datetime import datetime
+
+class PasswordManager:
+    def __init__(self):
+        self.passwords = {}
+        self.action_log = []
+
+    def generate_password(self, length=12, easy=True):
+        if easy:
+            characters = string.ascii_letters + string.digits
+        else:
+            characters = string.ascii_letters + string.digits + string.punctuation
+
+        password = ''.join(random.choice(characters) for i in range(length))
+        return password
+
+    def add_password(self, website, username, password):
+        if website not in self.passwords:
+            self.passwords[website] = {}
+        self.passwords[website][username] = password
+        self.log_action(f"Pievienota parole: Website - {website}, Username - {username}")
+
+    def get_password(self, website, username):
+        if website in self.passwords and username in self.passwords[website]:
+            return self.passwords[website][username]
+        else:
+            return "Parole nav atrasta."
+
+    def show_all_passwords(self):
+        table = PrettyTable()
+        table.field_names = ["Website", "Username", "Password"]
+
+        for website, user_passwords in self.passwords.items():
+            for username, password in user_passwords.items():
+                table.add_row([website, username, password])
+
+        return table.get_string()
+
+    def delete_password(self, website, username):
+        if website in self.passwords and username in self.passwords[website]:
+            del self.passwords[website][username]
+            self.log_action(f"Dzēsta parole: Website - {website}, Username - {username}")
+            return f"Parole dzēsta: Website - {website}, Username - {username}"
+        else:
+            return "Parole nav atrasta."
+
+    def log_action(self, action):
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = f"{timestamp} - {action}"
+        self.action_log.append(log_entry)
+        print(log_entry)
+
+    def show_action_log(self):
+        print("Darbību žurnāls:")
+        for entry in self.action_log:
+            print(entry)
+
+# Funkcija, kas ļauj lietotājam ievadīt komandas un redzēt rezultātus
+def main_terminal():
+    manager = PasswordManager()
+
+    while True:
+        print("\nIevadiet komandu:")
+        print("1 - Parādīt visas paroles")
+        print("2 - Pievienot paroli")
+        print("3 - Dzēst paroli")
+        print("4 - Parādīt darbību žurnālu")
+        print("0 - Iziet no termināla")
+
+        choice = input("Ievadiet izvēlnes numuru: ")
+
+        if choice == "1":
+            passwords_table = manager.show_all_passwords()
+            print("\nVisas paroles:")
+            print(passwords_table)
+
+        elif choice == "2":
+            website = input("Ievadiet tīmekļa vietu: ")
+            username = input("Ievadiet vārdu: ")
+            password = manager.generate_password()
+            manager.add_password(website, username, password)
+            print(f"\nParole pievienota: Website - {website}, Username - {username}, Password - {password}")
+
+        elif choice == "3":
+            website = input("Ievadiet tīmekļa vietu, kurai dzēst paroli: ")
+            username = input("Ievadiet Vardu, kam dzēst paroli: ")
+            result = manager.delete_password(website, username)
+            print(f"\n{result}")
+
+        elif choice == "4":
+            manager.show_action_log()
+
+        elif choice == "0":
+            print("Iziet no termināla. Bay Bay!")
+            break
+
+        else:
+            print("Nepareiza izvēle. Lūdzu, izvēlieties to ko jums vajag pareiz opciju.")
+
+
+main_terminal()
